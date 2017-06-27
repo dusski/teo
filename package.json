@@ -1,0 +1,14 @@
+{
+    "name": "TEO",
+    "dependencies": {
+        "electron": "^1.7.3"
+    },
+    "scripts": {
+        "start": "electron ."
+    },
+    "main": "main.js",
+    "version": "0.0.0",
+    "license": "MIT",
+    "description": "TEO is a helper program that keeps track of how long ago files were created and deletes them after the specified time has elapsed",
+    "author": "dusski"
+}
