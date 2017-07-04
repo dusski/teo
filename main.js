@@ -14,7 +14,6 @@ function createWindow () {
 		// height: 1000, //250,
 		// frame: false,
 		// autoHideMenuBar: true,
-		frame: false,
 		// transparent: true
 	}) 
 

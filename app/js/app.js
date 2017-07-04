@@ -1,6 +1,7 @@
 const fs = require('fs') // node file system package
-const $ = require('jquery') // jquery
+const path = require('path')
 
+const holder = document.getElementById('holder');
 const date = new Date();
 
 // drag
@@ -13,58 +14,45 @@ holder.ondragleave = holder.ondragend = () => {
     return false;
 }
 
-
 holder.ondrop = (e) => {
     e.preventDefault()
-    // let files = [];
-    console.log(e.dataTransfer.files)
+    let files = [];
+    // console.log(e.dataTransfer)
+    // console.log(e.dataTransfer.files)
+    // for (let item of e.dataTransfer.items) { console.log(item) }
+    // console.log(e.dataTransfer.types)
     for (let f of e.dataTransfer.files) {
 
-        // files.push(`
-        // <div> 
+        let isDir = fs.statSync(f.path).isDirectory()
 
-        // <p>FIle Name: ${f.name}</p>
-        // <p>Last Modified: ${f.lastModified}</p>
-        // <p>Last Modiied (Date): ${f.lastModifiedDate} </p>
-        // <p>Folder or File: ${isFolder(f.name) ? 'Folder' : 'File'}</p>
-        // <p>Contains Files: <span></span></p>
+        if (isDir) {
+            let pass = 1;
+            fs.writeFileSync(`config_${pass}.txt`, fileList(f.path), 'utf8');
+            pass += 1;
+        } else {
+            files.push(`
+            <div> 
+            <p>FIle Name: ${f.name}</p>
+            <p>Last Modified: ${f.lastModified}</p>
+            <p>Last Modiied (Date): ${f.lastModifiedDate} </p>
+            <p>Folder or File: File</p>
+            <p>Contains Files: <span></span></p>
+            </div>
+            <hr>
+            `)
+        }
 
-        // </div>
-        // <hr>
-        // `)
-
-        console.log(f.name, fsIsFolder(f.path), isFolder(f.name));
-
-        // if (fsIsFolder(f.path)) {
-        //     fs.readdir(f.path, (err, files) => {
-        //         if (files) {
-
-        //             // console.log(files)
-        //             // files.forEach(file => {
-        //             //     console.log(file);
-        //             //     fs.readFile(__dirname + '\\' + file, { encoding: 'utf8' }, (err, data) => {
-        //             //         console.log(data);
-        //             //     })
-        //             // })
-        //         }
-        //     })
-        // }
     }
 
-    $('#holder').html(files);
+    holder.innerHTML = files;
     return false;
 }
 
-let isFolder = (fileName) => {
-    let tmp = fileName.split('.');
-    for (let el of tmp) {
-        if (el == "") {
-            tmp.splice(tmp.indexOf(""), 1);
-        }
-    }
-    return tmp.length == 1;
-}
-
-let fsIsFolder = (filePath) => {
-    return fs.stat(filePath, (err, stats) => stats.isDirectory());
+function fileList(dir) {
+    console.log(dir);
+    return fs.readdirSync(dir).reduce(function (list, file) {
+        var name = path.join(dir, file);
+        var isDir = fs.statSync(name).isDirectory();
+        return list.concat(isDir ? fileList(name) : [name]);
+    }, []);
 }
